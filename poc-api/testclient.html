@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+    <head>
+        <title>WS test</title>
+    </head>
+    <body>
+
+        <label>
+            My address:
+            <input type="text" id="myaddress"/>
+        </label>
+
+        <br/><br/>
+
+        <div>Balance: <span id="balance"></span> (wei)</div>
+        <button onclick="getBalance()">Get balance</button>
+
+        <br/><br/>
+
+        <div>Send ether:</div>
+        <label>
+            To:
+            <input type="text" id="sendto"/>
+        </label>
+        <br/>
+        <label>
+            Amount:
+            <input type="number" id="amount"/> (wei)
+        </label>
+        <div>Transaction result: <span id="trxres"></span></div>
+        <br/>
+        <button onclick="sendEther()">Send</button>
+
+        <script type="text/javascript">
+            var ws = new WebSocket("ws://localhost:8484/");
+
+            ws.onopen = function()
+            {
+                console.log("Connection is open..."); 
+            };
+
+            ws.onmessage = function (balance) 
+            { 
+                const event = JSON.parse(balance.data);
+                switch (event.eventName) {
+                    case 'balance':
+                        document.getElementById("balance").innerText = event.eventData.balance;
+                        break;
+                    case 'receipt':
+                        document.getElementById("trxres").innerText = 'Transaction mined in block: ' + event.eventData.blockNumber;
+                        break;
+                }
+            };
+             
+            ws.onclose = function()
+            { 
+               console.log("Connection is closed..."); 
+            };
+
+            getBalance = function() {
+                const event = JSON.stringify({
+                    eventName: 'getBalance',
+                    eventData: {
+                        address: document.getElementById("myaddress").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            sendEther = function() {
+                document.getElementById("trxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'sendEther',
+                    eventData: {
+                        from: document.getElementById("myaddress").value,
+                        to: document.getElementById("sendto").value,
+                        amount: document.getElementById("amount").value,
+                    }
+                });
+
+                ws.send(event);
+            };
+
+        </script>
+    </body>
+</html>

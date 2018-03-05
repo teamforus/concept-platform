@@ -1,0 +1,6 @@
+var Settings = {
+    host: 'ws://localhost:8546',
+    chainId: 1234,
+}
+
+module.exports = Settings;
