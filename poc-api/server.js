@@ -44,6 +44,12 @@ wss.on('connection', function connection(ws) {
                     event.eventData.amount
                 );
                 break;
+            case 'addAccount':
+                addAccount(ws, event.eventData.privateKey);
+                break;
+            case 'createAccount':
+                createAccount(ws);
+                break;
         }
 
     });
@@ -93,4 +99,30 @@ sendEther = async function(ws, from, to, value) {
     ws.send(message);
 
     getBalance(ws, from);
+}
+
+addAccount = function(ws, privateKey) {
+    const identity = web3.eth.accounts.privateKeyToAccount(privateKey);
+    newAccount(ws, identity);
+}
+
+createAccount = function(ws) {
+    const identity = web3.eth.accounts.create();
+    newAccount(ws, identity);
+}
+
+newAccount = function(ws, identity) {
+    identitiesDB.set(identity.address, {
+        'address': identity.address,
+        'privateKey': identity.privateKey
+    });
+    
+    const message = JSON.stringify({
+        eventName: 'newAccount',
+        eventData: {
+            address: identity.address
+        }
+    });
+
+    ws.send(message);
 }
