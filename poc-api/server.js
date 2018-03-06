@@ -93,7 +93,9 @@ sendEther = async function(ws, from, to, value) {
 
     const message = JSON.stringify({
         eventName: 'receipt',
-        eventData: receipt
+        eventData: {
+            receipt: receipt
+        }
     });
 
     ws.send(message);

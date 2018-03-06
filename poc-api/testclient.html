@@ -66,7 +66,7 @@
                         document.getElementById("balance").innerText = event.eventData.balance;
                         break;
                     case 'receipt':
-                        document.getElementById("trxres").innerText = 'Transaction mined in block: ' + event.eventData.blockNumber;
+                        document.getElementById("trxres").innerText = 'Transaction mined in block: ' + event.eventData.receipt.blockNumber;
                         break;
                     case 'newAccount':
                         document.getElementById("newaddress").innerText = event.eventData.address;
