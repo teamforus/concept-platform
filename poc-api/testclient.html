@@ -50,6 +50,56 @@
         <br/>
         <button onclick="sendEther()">Send</button>
 
+        <hr/>
+
+        <div>Deploy ERC20 token:</div>
+        <label>
+            name:
+            <input type="text" id="tokenname"/>
+        </label>
+        <br/>
+        <label>
+            Total supply:
+            <input type="text" id="totalsupply"/>
+        </label>
+        <div>Token address: <span id="createerc20trxres"></span></div>
+        <br/>
+        <button onclick="deployToken()">Send</button>
+
+        <hr/>
+
+        <label>
+            Token address:
+            <input type="text" id="tokenaddress"/>
+        </label>
+
+        <hr/>
+
+        <div>Name: <span id="tokenname"></span></div>
+        <button onclick="getTokenName()">Get name</button>
+
+        <hr/>
+
+        <div>Total supply: <span id="totalsupply"></span></div>
+        <button onclick="getTokenTotalSupply()">Get total supply</button>
+
+        <hr/>
+
+        <label>
+            Owner address:
+            <input type="text" id="tokenOwnerAddress"/>
+        </label>
+
+        <hr/>
+
+        <div>Owner balance: <span id="ownerbalance"></span></div>
+        <button onclick="getTokenBalanceOf()">Get balance</button>
+
+
+
+
+        
+
         <script type="text/javascript">
             var ws = new WebSocket("ws://localhost:8484/");
 
@@ -70,6 +120,9 @@
                         break;
                     case 'newAccount':
                         document.getElementById("newaddress").innerText = event.eventData.address;
+                        break;
+                    case 'tokenDeployed':
+                        document.getElementById("createerc20trxres").innerText = event.eventData.address;
                         break;
                 }
             };
@@ -123,6 +176,55 @@
 
                 const event = JSON.stringify({
                     eventName: 'createAccount'
+                });
+
+                ws.send(event);
+            };
+
+            deployToken = function() {
+                document.getElementById("createerc20trxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'deployToken',
+                    eventData: {
+                        creatorAddress: document.getElementById("myaddress").value,
+                        tokenName: document.getElementById("tokenname").value,
+                        totalSupply: document.getElementById("totalsupply").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getTokenName = function() {
+                const event = JSON.stringify({
+                    eventName: 'getTokenName',
+                    eventData: {
+                        address: document.getElementById("tokenaddress").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getTokenTotalSupply = function() {
+                const event = JSON.stringify({
+                    eventName: 'getTokenTotalSupply',
+                    eventData: {
+                        address: document.getElementById("tokenaddress").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getTokenBalanceOf = function() {
+                const event = JSON.stringify({
+                    eventName: 'getTokenBalanceOf',
+                    eventData: {
+                        tokenAddress: document.getElementById("tokenaddress").value,
+                        ownerAddress: document.getElementById("tokenOwnerAddress").value
+                    }
                 });
 
                 ws.send(event);

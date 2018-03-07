@@ -72,6 +72,77 @@ Transfers ether from one account to another
 - receipt
 - balance
 
+#### deployToken
+Deploys a new ERC20 contract.
+The totalSupply is initially given to the creator of the contract.
+
+##### JSON message
+```javascript
+{
+    eventName: 'deployToken',
+    eventData: {
+        creatorAddress: {{string}} // Account address of the creator.
+        totalSupply: {{number}} // Total supply for this token.
+    }
+}
+```
+
+##### Triggers
+-tokenDeployed
+
+#### getTokenName
+Get the name of a token
+
+##### JSON message
+```javascript
+{
+    eventName: 'getTokenName',
+    eventData: {
+        address: {{string}} // Address of the token
+    }
+}
+```
+
+##### Triggers
+-
+
+#### getTokenTotalSupply
+Get the total supply of a token
+
+##### JSON message
+```javascript
+{
+    eventName: 'getTokenTotalSupply',
+    eventData: {
+        address: {{string}} // Address of the token
+    }
+}
+```
+
+##### Triggers
+-
+
+#### getTokenBalanceOf
+Get the token balance of a specific owner
+
+##### JSON message
+```javascript
+{
+    eventName: '',
+    eventData: {
+        tokenAddress: {{string}}, // Address of the token
+        ownerAddress: {{string}} // Address of the owner
+    }
+}
+```
+
+##### Triggers
+-
+
+
+
+
+
 
 ### Events
 
@@ -119,6 +190,22 @@ The receipt for a mined transaction
     eventName: 'receipt',
     eventData: {
         receipt: receipt // The receipt as received from web3js; see http://web3js.readthedocs.io/en/1.0/web3-eth.html#gettransactionreceipt.
+    }
+}
+```
+
+##### Triggered by
+- sendEther
+
+### tokenDeployed
+Confirms the creation of an ERC20 contract
+
+##### JSON message
+```javascript
+{
+    eventName: 'tokenDeployed',
+    eventData: {
+        address: {{string}} // The addres of the created contract
     }
 }
 ```
