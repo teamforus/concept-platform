@@ -26,7 +26,7 @@
 
         <label>
             My address:
-            <input type="text" id="myaddress"/>
+            <input type="text" id="myaddress" value=""/>
         </label>
 
         <hr/>
@@ -95,6 +95,63 @@
         <div>Owner balance: <span id="ownerbalance"></span></div>
         <button onclick="getTokenBalanceOf()">Get balance</button>
 
+        <hr/>
+
+        <div>Deploy identity:</div>
+        <div>Token address: <span id="createidentitytrxres"></span></div>
+        <br/>
+        <button onclick="deployIdentity()">Deploy</button>
+
+        <hr/>
+
+        <label>
+            Identity address:
+            <input type="text" id="identityaddress" value=""/>
+        </label>
+
+        <hr/>
+
+        <div>Set identity attribute:</div>
+        <label>
+            Name:
+            <input type="text" id="setattributename" value=""/>
+        </label>
+        <br/>
+        <label>
+            Value:
+            <input type="text" id="setattributevalue" value=""/>
+        </label>
+        <div>Result: <span id="setidentityattributetrxres"></span></div>
+        <br/>
+        <button onclick="setIdentityAttribute()">Set</button>
+
+        <hr/>
+
+        <div>Validate identity attribute:</div>
+        <label>
+            Name:
+            <input type="text" id="validateattributename" value=""/>
+        </label>
+        <br/>
+        <label>
+            Validator address:
+            <input type="text" id="validateattributevalidator" value=""/>
+        </label>
+        <div>Result: <span id="validateidentityattributetrxres"></span></div>
+        <br/>
+        <button onclick="validateIdentityAttribute()">Validate</button>
+
+        <hr/>
+
+        <div>Get identity attribute:</div>
+        <label>
+            Name:
+            <input type="text" id="getattributename" value=""/>
+        </label>
+        <div>Result: <span id="getidentityattributetrxres"></span></div>
+        <br/>
+        <button onclick="getIdentityAttribute()">Get</button>
+
 
 
 
@@ -123,6 +180,29 @@
                         break;
                     case 'tokenDeployed':
                         document.getElementById("createerc20trxres").innerText = event.eventData.address;
+                        break;
+                    case 'identityDeployed':
+                        document.getElementById("createidentitytrxres").innerText = event.eventData.address;
+                        break;
+                    case 'identityAttributeChanged':
+                        document.getElementById("setidentityattributetrxres").innerText = 
+                        event.eventData.identityAddress + '.' +
+                        event.eventData.attributeName + ' = ' +
+                        event.eventData.attributeValue;
+                        break;
+                    case 'identityAttributeValidated':
+                        document.getElementById("validateidentityattributetrxres").innerText = 
+                        event.eventData.identityAddress + '.' +
+                        event.eventData.attributeName + ' is validated by:  ' +
+                        event.eventData.validatorAddress;
+                        break;
+                    case 'identityAttribute':
+                        document.getElementById("getidentityattributetrxres").innerText = 
+                        event.eventData.identityAddress + '.' +
+                        event.eventData.attributeName + ' = { ' +
+                        'name: ' + event.eventData.attribute.name +
+                        ', value: ' + event.eventData.attribute.value +
+                        ', validator: ' + event.eventData.attribute.validator + ' }';
                         break;
                 }
             };
@@ -224,6 +304,65 @@
                     eventData: {
                         tokenAddress: document.getElementById("tokenaddress").value,
                         ownerAddress: document.getElementById("tokenOwnerAddress").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            deployIdentity = function() {
+                document.getElementById("createidentitytrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'deployIdentity',
+                    eventData: {
+                        creatorAddress: document.getElementById("myaddress").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            setIdentityAttribute = function() {
+                document.getElementById("setidentityattributetrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'setIdentityAttribute',
+                    eventData: {
+                        ownerAddress: document.getElementById("myaddress").value,
+                        identityAddress: document.getElementById("identityaddress").value,
+                        attributeName: document.getElementById("setattributename").value,
+                        attributeValue: document.getElementById("setattributevalue").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            validateIdentityAttribute = function() {
+                document.getElementById("validateidentityattributetrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'validateIdentityAttribute',
+                    eventData: {
+                        ownerAddress: document.getElementById("myaddress").value,
+                        identityAddress: document.getElementById("identityaddress").value,
+                        attributeName: document.getElementById("validateattributename").value,
+                        validatorAddress: document.getElementById("validateattributevalidator").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getIdentityAttribute = function() {
+                document.getElementById("getidentityattributetrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'getIdentityAttribute',
+                    eventData: {
+                        identityAddress: document.getElementById("identityaddress").value,
+                        attributeName: document.getElementById("getattributename").value,
                     }
                 });
 

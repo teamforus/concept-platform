@@ -139,6 +139,80 @@ Get the token balance of a specific owner
 ##### Triggers
 -
 
+#### deployIdentity
+Deploys a new identity contract
+
+##### JSON message
+```javascript
+{
+    eventName: 'deployIdentity',
+    eventData: {
+        creatorAddress: {{string}} // Address of the owner
+    }
+}
+```
+
+##### Triggers
+- identityDeployed
+
+#### setIdentityAttribute
+Sets the attribute of an identity.
+When the value of an attribute gets changed, the validator for the attribute will be set to 0;
+
+##### JSON message
+```javascript
+{
+    eventName: 'setIdentityAttribute',
+    eventData: {
+        ownerAddress: {{string}}, // Address of the owner
+        identityAddress: {{string}}, // Address of the identity contract
+        attributeName: {{string}}, // Name of the attribute
+        attributeValue: {{string}} // New value for attribute
+    }
+}
+```
+
+##### Triggers
+- identityAttributeChanged
+
+
+#### validateIdentityAttribute
+Validate an attribute of an identity
+
+##### JSON message
+```javascript
+{
+    eventName: 'validateIdentityAttribute',
+    eventData: {
+        ownerAddress: {{string}}, // Address of the owner
+        identityAddress: {{string}}, // Address of the identity contract
+        attributeName: {{string}}, // Name of the attribute
+        validatorAddress: {{string}} // Address of the validator
+    }
+}
+```
+
+##### Triggers
+- identityAttributeValidated
+
+
+#### getIdentityAttribute
+Retrieves an attribute from an identity
+
+##### JSON message
+```javascript
+{
+    eventName: 'getIdentityAttribute',
+    eventData: {
+        identityAddress: {{string}}, // Address of the identity contract
+        attributeName: {{string}} // Name of the attribute
+    }
+}
+```
+
+##### Triggers
+- identityAttribute
+
 
 
 
@@ -205,10 +279,84 @@ Confirms the creation of an ERC20 contract
 {
     eventName: 'tokenDeployed',
     eventData: {
-        address: {{string}} // The addres of the created contract
+        address: {{string}} // The address of the created contract
     }
 }
 ```
 
 ##### Triggered by
 - sendEther
+
+### identityDeployed
+Confirms the creation of an identity contract.
+
+##### JSON message
+```javascript
+{
+    eventName: 'identityDeployed',
+    eventData: {
+        address: {{string}} // The address of the created contract
+    }
+}
+```
+
+##### Triggered by
+- deployIdentity
+
+### identityAttributeChanged
+Notification of a changed attribute.
+
+##### JSON message
+```javascript
+{
+    eventName: 'identityAttributeChanged',
+    eventData: {
+        identityAddress: {{string}}, // The address of the identity contract
+        attributeName: {{string}}, // The name of the changed attribute
+        attributeValue: {{string}} // The new value
+    }
+}
+```
+
+##### Triggered by
+- setIdentityAttribute
+
+### identityAttributeValidated
+Notification of a validated attribute
+
+##### JSON message
+```javascript
+{
+    eventName: 'identityAttributeValidated',
+    eventData: {
+            identityAddress: {{string}}, // Address of the identity
+            attributeName: {{string}}, // Name of the attribute
+            validatorAddress: {{string}} // Address of the validator
+        }
+    }
+}
+```
+
+##### Triggered by
+- validateIdentityAttribute
+
+### identityAttribute
+Returns the value of an attribute
+
+##### JSON message
+```javascript
+{
+    eventName: 'identityAttribute',
+    eventData: {
+        identityAddress: {{string}}, // The address of the identity contract
+        attribute: {
+            name: {{string}},
+            value: {{string}},
+            validator: {{string}}, // The address of the validator for this attribute
+        }
+    }
+}
+```
+
+##### Triggered by
+- getIdentityAttribute
