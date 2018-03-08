@@ -433,9 +433,8 @@ setIPFSAttribute = async function (
     new IpfsKVStore().init(
         ipfs,
         identityAddress,
-        '/ipfs/QmUgqk4dhu2ooNkXPDiGhJtmP711QZmiwJcuXgAXPhk882',
+        ipfsPath,
         (ipfsPath) => {
-            console.log('New IPFS path: ' + ipfsPath);
             identitiesDB.set(identityAddress, ipfsPath);
         }).then((kvstore) => {
             
@@ -467,9 +466,8 @@ getIPFSAttribute = async function (
     new IpfsKVStore().init(
         ipfs,
         identityAddress,
-        ipfsPath, // '/ipfs/QmUgqk4dhu2ooNkXPDiGhJtmP711QZmiwJcuXgAXPhk882',
+        ipfsPath,
         (ipfsPath) => {
-            console.log('New IPFS path: ' + ipfsPath);
             identitiesDB.set(identityAddress, ipfsPath);
         }).then((kvstore) => {
             kvstore.get(attributeName).then((file) => {
@@ -497,7 +495,7 @@ class IpfsKVStore {
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-      }
+    }
     
     async init(ipfs, dirname, ipfsPath, newIpfsPathCallback) {
         this.ipfs = ipfs;
@@ -523,15 +521,6 @@ class IpfsKVStore {
             return this
         });
         
-    }
-
-    async readfiles() {
-        this.ipfs.ls(this.ipfsPath)
-        .then((files) => {
-            files.forEach((file) => {
-                console.log(file)
-            });
-        }).catch((error) => {});
     }
 
     async get(key) {
@@ -577,8 +566,6 @@ class IpfsKVStore {
         if (!foundOne) {
             filesToAdd.push(newFile);
         }
-
-        console.log(filesToAdd);
 
         ipfs.files.add(filesToAdd).then((res) => {
             for(let file of res) {
