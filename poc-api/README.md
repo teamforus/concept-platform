@@ -214,6 +214,43 @@ Retrieves an attribute from an identity
 - identityAttribute
 
 
+#### setIPFSAttribute
+Sets the attribute on IPFS.
+
+##### JSON message
+```javascript
+{
+    eventName: 'setIPFSAttribute',
+    eventData: {
+        ownerAddress: {{string}}, // Address of the owner
+        identityAddress: {{string}}, // Address of the identity contract
+        attributeName: {{string}}, // Name of the attribute
+        attributeValue: {{string}} // New value for attribute
+    }
+}
+```
+
+##### Triggers
+- ipfsAttributeChanged
+
+#### getIPFSAttribute
+Retrieves an attribute from IPFS
+
+##### JSON message
+```javascript
+{
+    eventName: 'getIPFSAttribute',
+    eventData: {
+        ownerAddress: {{string}}, // Address of the owner
+        identityAddress: {{string}}, // Address of the identity contract
+        attributeName: {{string}} // Name of the attribute
+    }
+}
+```
+
+##### Triggers
+- ipfsAttribute
+
 
 
 
@@ -360,3 +397,40 @@ Returns the value of an attribute
 
 ##### Triggered by
 - getIdentityAttribute
+
+### ipfsAttributeChanged
+Notification of a changed IPFS attribute.
+
+##### JSON message
+```javascript
+{
+    eventName: 'ipfsAttributeChanged',
+    eventData: {
+        identityAddress: {{string}}, // The address of the identity contract
+        attributeName: {{string}}, // Name of the attribute
+        attributeValue: {{string}}, // Value of the attribute
+    }
+}
+```
+
+##### Triggered by
+- setIPFSAttribute
+
+
+### ipfsAttribute
+Returns the value of an IPFS attribute
+
+##### JSON message
+```javascript
+{
+    eventName: 'ipfsAttribute',
+    eventData: {
+        identityAddress: {{string}}, // The address of the identity contract
+        attributeName: {{string}}, // Name of the attribute
+        attributeValue: {{string}}, // Value of the attribute
+    }
+}
+```
+
+##### Triggered by
+- getIPFSAttribute
