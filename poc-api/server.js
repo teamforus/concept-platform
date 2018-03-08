@@ -1,4 +1,8 @@
-var fs = require('fs');
+const ipfsAPI = require('ipfs-api');
+
+var ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
+
+const fs = require('fs');
 
 const WebSocket = require('ws');
 
@@ -102,6 +106,23 @@ wss.on('connection', function connection(ws) {
                     event.eventData.identityAddress,
                     event.eventData.attributeName,
                     event.eventData.validatorAddress
+                );
+                break;
+            case 'setIPFSAttribute':
+            setIPFSAttribute(
+                    ws,
+                    event.eventData.ownerAddress,
+                    event.eventData.identityAddress,
+                    event.eventData.attributeName,
+                    event.eventData.attributeValue,
+                );
+                break;
+            case 'getIPFSAttribute':
+            getIPFSAttribute(
+                    ws,
+                    event.eventData.ownerAddress,
+                    event.eventData.identityAddress,
+                    event.eventData.attributeName
                 );
                 break;
         }
@@ -398,4 +419,175 @@ getIdentityAttribute = async function(ws, identityAddress, attributeName) {
     }).catch((error) => {
         throw new Error(error);
     });
+}
+
+setIPFSAttribute = async function (
+    ws,
+    ownerAddress,
+    identityAddress,
+    attributeName,
+    attributeValue
+) {
+    const ipfsPath = identitiesDB.get(identityAddress);
+   
+    new IpfsKVStore().init(
+        ipfs,
+        identityAddress,
+        '/ipfs/QmUgqk4dhu2ooNkXPDiGhJtmP711QZmiwJcuXgAXPhk882',
+        (ipfsPath) => {
+            console.log('New IPFS path: ' + ipfsPath);
+            identitiesDB.set(identityAddress, ipfsPath);
+        }).then((kvstore) => {
+            
+            kvstore.set(attributeName, Buffer.from(attributeValue)).then(() => {            
+
+            const message = JSON.stringify({
+                eventName: 'ipfsAttributeChanged',
+                eventData: {
+                    identityAddress: identityAddress,
+                    attributeName: attributeName,
+                    attributeValue: attributeValue
+                }
+            });
+            ws.send(message);
+            });
+            
+        }
+    );
+}
+
+getIPFSAttribute = async function (
+    ws,
+    ownerAddress,
+    identityAddress,
+    attributeName
+) {
+    const ipfsPath = identitiesDB.get(identityAddress);
+
+    new IpfsKVStore().init(
+        ipfs,
+        identityAddress,
+        ipfsPath, // '/ipfs/QmUgqk4dhu2ooNkXPDiGhJtmP711QZmiwJcuXgAXPhk882',
+        (ipfsPath) => {
+            console.log('New IPFS path: ' + ipfsPath);
+            identitiesDB.set(identityAddress, ipfsPath);
+        }).then((kvstore) => {
+            kvstore.get(attributeName).then((file) => {
+                let result = '';
+                if (file) {
+                    result = file.toString('utf8');
+                }
+
+                const message = JSON.stringify({
+                    eventName: 'ipfsAttribute',
+                    eventData: {
+                        identityAddress: identityAddress,
+                        attributeName: attributeName,
+                        attributeValue: result
+                    }
+                });
+                ws.send(message);
+
+            });
+        }
+    );
+}
+
+class IpfsKVStore {
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    
+    async init(ipfs, dirname, ipfsPath, newIpfsPathCallback) {
+        this.ipfs = ipfs;
+        this.dirname = dirname;
+        this.ipfsPath = ipfsPath;
+        this.newIpfsPathCallback = newIpfsPathCallback;
+
+        if (this.ipfsPath) {
+            return this;
+        }
+
+        return ipfs.files.add([{path: '/' + this.dirname}])
+        .then((res) => {
+            for (let i = 0; i < res.length; i++) {
+                const file = res[i];
+                if (file.path == this.dirname) {
+                    return '/ipfs/' + file.hash;
+                }
+            }
+        }).then((path) => {
+            this.ipfsPath = path;
+            this.newIpfsPathCallback(this.ipfsPath);
+            return this
+        });
+        
+    }
+
+    async readfiles() {
+        this.ipfs.ls(this.ipfsPath)
+        .then((files) => {
+            files.forEach((file) => {
+                console.log(file)
+            });
+        }).catch((error) => {});
+    }
+
+    async get(key) {
+        return this.ipfs.cat(this.ipfsPath + '/' + key)
+        .then((file) => {
+            return file;
+        })
+        .catch(() => {return null});
+    }
+
+    async set(key, value) {
+        let filesToAdd = [];
+
+        ipfs.ls(this.ipfsPath).then((files) => {
+
+            for(let file of files) {
+                
+                this.get(file.name).then((content) => {
+                    return {
+                        path: '/' + this.dirname + '/' + file.name,
+                        content: content
+                    };
+                }).then((file) => {
+                    filesToAdd.push(file);
+                });
+                
+            };
+        });
+        await this.sleep(2000);
+
+
+        let newFile ={
+            path: '/' + this.dirname + '/' + key,
+            content: value
+        };
+        let foundOne = false;
+        for (let existingFile of filesToAdd) {
+            if (existingFile.path == newFile.path) {
+                foundOne = true;
+                existingFile.content = newFile.content;
+            }
+        }
+        if (!foundOne) {
+            filesToAdd.push(newFile);
+        }
+
+        console.log(filesToAdd);
+
+        ipfs.files.add(filesToAdd).then((res) => {
+            for(let file of res) {
+                if (file.path == this.dirname) {
+                    this.ipfsPath = '/ipfs/' + file.hash;
+                    this.newIpfsPathCallback(this.ipfsPath);
+                }
+            }
+        });
+
+    }
 }

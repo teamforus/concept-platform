@@ -26,7 +26,7 @@
 
         <label>
             My address:
-            <input type="text" id="myaddress" value=""/>
+            <input type="text" id="myaddress" value="0x88e94A4b7BfC62A38D300d98ce1C09f30fb75e3E"/>
         </label>
 
         <hr/>
@@ -64,13 +64,13 @@
         </label>
         <div>Token address: <span id="createerc20trxres"></span></div>
         <br/>
-        <button onclick="deployToken()">Send</button>
+        <button onclick="deployToken()">Deploy</button>
 
         <hr/>
 
         <label>
             Token address:
-            <input type="text" id="tokenaddress"/>
+            <input type="text" id="tokenaddress" value="0xfb6F6aCC2fB42d17eBD4AF4182c9Fcd2770fB748"/>
         </label>
 
         <hr/>
@@ -106,7 +106,7 @@
 
         <label>
             Identity address:
-            <input type="text" id="identityaddress" value=""/>
+            <input type="text" id="identityaddress" value="0x6E5D5fda754a18eE47357470D8F553BBd528a3b0"/>
         </label>
 
         <hr/>
@@ -114,12 +114,12 @@
         <div>Set identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="setattributename" value=""/>
+            <input type="text" id="setattributename" value="Name"/>
         </label>
         <br/>
         <label>
             Value:
-            <input type="text" id="setattributevalue" value=""/>
+            <input type="text" id="setattributevalue" value="Jasper"/>
         </label>
         <div>Result: <span id="setidentityattributetrxres"></span></div>
         <br/>
@@ -130,12 +130,12 @@
         <div>Validate identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="validateattributename" value=""/>
+            <input type="text" id="validateattributename" value="Name"/>
         </label>
         <br/>
         <label>
             Validator address:
-            <input type="text" id="validateattributevalidator" value=""/>
+            <input type="text" id="validateattributevalidator" value="0xbb5f81b783d1324badfba9832ad9d0500d37d1c3"/>
         </label>
         <div>Result: <span id="validateidentityattributetrxres"></span></div>
         <br/>
@@ -146,11 +146,38 @@
         <div>Get identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="getattributename" value=""/>
+            <input type="text" id="getattributename" value="Name"/>
         </label>
         <div>Result: <span id="getidentityattributetrxres"></span></div>
         <br/>
         <button onclick="getIdentityAttribute()">Get</button>
+
+        <hr/>
+
+        <div>Set IPFS attribute:</div>
+        <label>
+            Name:
+            <input type="text" id="setipfsattributename" value="Name"/>
+        </label>
+        <br/>
+        <label>
+            Value:
+            <input type="text" id="setipfsattributevalue" value="Jasper"/>
+        </label>
+        <div>Result: <span id="setipfsattributetrxres"></span></div>
+        <br/>
+        <button onclick="setIPFSAttribute()">Set</button>
+
+        <hr/>
+
+        <div>Get IPFS attribute:</div>
+        <label>
+            Name:
+            <input type="text" id="getipfsattributename" value="Name"/>
+        </label>
+        <div>Result: <span id="getipfsattributetrxres"></span></div>
+        <br/>
+        <button onclick="getIPFSAttribute()">Get</button>
 
 
 
@@ -203,6 +230,18 @@
                         'name: ' + event.eventData.attribute.name +
                         ', value: ' + event.eventData.attribute.value +
                         ', validator: ' + event.eventData.attribute.validator + ' }';
+                        break;
+                    case 'ipfsAttributeChanged':
+                        document.getElementById("setipfsattributetrxres").innerText = 
+                        event.eventData.identityAddress + '.' +
+                        event.eventData.attributeName + ' = ' +
+                        event.eventData.attributeValue;
+                        break;
+                    case 'ipfsAttribute':
+                        document.getElementById("getipfsattributetrxres").innerText = 
+                        event.eventData.identityAddress + '.' +
+                        event.eventData.attributeName + ' = ' +
+                        event.eventData.attributeValue;
                         break;
                 }
             };
@@ -363,6 +402,37 @@
                     eventData: {
                         identityAddress: document.getElementById("identityaddress").value,
                         attributeName: document.getElementById("getattributename").value,
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            setIPFSAttribute = function() {
+                document.getElementById("setipfsattributetrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'setIPFSAttribute',
+                    eventData: {
+                        ownerAddress: document.getElementById("myaddress").value,
+                        identityAddress: document.getElementById("identityaddress").value,
+                        attributeName: document.getElementById("setipfsattributename").value,
+                        attributeValue: document.getElementById("setipfsattributevalue").value
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getIPFSAttribute = function() {
+                document.getElementById("getipfsattributetrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'getIPFSAttribute',
+                    eventData: {
+                        ownerAddress: document.getElementById("myaddress").value,
+                        identityAddress: document.getElementById("identityaddress").value,
+                        attributeName: document.getElementById("getipfsattributename").value,
                     }
                 });
 

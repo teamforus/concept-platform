@@ -1,17 +1,19 @@
 {
   "name": "poc-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "### Remarks",
   "main": "server.js",
+  "dependencies": {
+    "dirty": "^1.1.0",
+    "ipfs-api": "^18.1.1",
+    "web3": "^1.0.0-beta.30",
+    "ws": "^5.0.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "dirty": "^1.1.0",
-    "web3": "^1.0.0-beta.30",
-    "ws": "^4.1.0"
-  }
+  "license": "ISC"
 }
