@@ -208,7 +208,7 @@ deployToken = async function(ws, creatorAddress, tokenName, totalSupply) {
 
     const deploy = contractData.contract.deploy({
         data: contractData.bin,
-        arguments: [tokenName, totalSupply]
+        arguments: [tokenName, parseInt(totalSupply)]
     });
     
     const trx = {
