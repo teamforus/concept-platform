@@ -125,6 +125,12 @@ wss.on('connection', function connection(ws) {
                     event.eventData.attributeName
                 );
                 break;
+            case 'getIPFSPath':
+            getIPFSPath(
+                    ws,
+                    event.eventData.identityAddress
+                );
+                break;
         }
 
     });
@@ -489,6 +495,16 @@ getIPFSAttribute = async function (
             });
         }
     );
+}
+
+getIPFSPath = async function (ws, identityAddress) {
+    const message = JSON.stringify({
+        eventName: 'ipfsPath',
+        eventData: {
+            path: identitiesDB.get(identityAddress)
+        }
+    });
+    ws.send(message);
 }
 
 class IpfsKVStore {

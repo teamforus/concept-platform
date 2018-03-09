@@ -26,7 +26,7 @@
 
         <label>
             My address:
-            <input type="text" id="myaddress" value="0x88e94A4b7BfC62A38D300d98ce1C09f30fb75e3E"/>
+            <input type="text" id="myaddress" value=""/>
         </label>
 
         <hr/>
@@ -70,7 +70,7 @@
 
         <label>
             Token address:
-            <input type="text" id="tokenaddress" value="0xfb6F6aCC2fB42d17eBD4AF4182c9Fcd2770fB748"/>
+            <input type="text" id="tokenaddress" value=""/>
         </label>
 
         <hr/>
@@ -106,7 +106,7 @@
 
         <label>
             Identity address:
-            <input type="text" id="identityaddress" value="0x6E5D5fda754a18eE47357470D8F553BBd528a3b0"/>
+            <input type="text" id="identityaddress" value=""/>
         </label>
 
         <hr/>
@@ -114,12 +114,12 @@
         <div>Set identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="setattributename" value="Name"/>
+            <input type="text" id="setattributename" value=""/>
         </label>
         <br/>
         <label>
             Value:
-            <input type="text" id="setattributevalue" value="Jasper"/>
+            <input type="text" id="setattributevalue" value=""/>
         </label>
         <div>Result: <span id="setidentityattributetrxres"></span></div>
         <br/>
@@ -130,12 +130,12 @@
         <div>Validate identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="validateattributename" value="Name"/>
+            <input type="text" id="validateattributename" value=""/>
         </label>
         <br/>
         <label>
             Validator address:
-            <input type="text" id="validateattributevalidator" value="0xbb5f81b783d1324badfba9832ad9d0500d37d1c3"/>
+            <input type="text" id="validateattributevalidator" value=""/>
         </label>
         <div>Result: <span id="validateidentityattributetrxres"></span></div>
         <br/>
@@ -146,7 +146,7 @@
         <div>Get identity attribute:</div>
         <label>
             Name:
-            <input type="text" id="getattributename" value="Name"/>
+            <input type="text" id="getattributename" value=""/>
         </label>
         <div>Result: <span id="getidentityattributetrxres"></span></div>
         <br/>
@@ -157,12 +157,12 @@
         <div>Set IPFS attribute:</div>
         <label>
             Name:
-            <input type="text" id="setipfsattributename" value="Name"/>
+            <input type="text" id="setipfsattributename" value=""/>
         </label>
         <br/>
         <label>
             Value:
-            <input type="text" id="setipfsattributevalue" value="Jasper"/>
+            <input type="text" id="setipfsattributevalue" value=""/>
         </label>
         <div>Result: <span id="setipfsattributetrxres"></span></div>
         <br/>
@@ -173,11 +173,18 @@
         <div>Get IPFS attribute:</div>
         <label>
             Name:
-            <input type="text" id="getipfsattributename" value="Name"/>
+            <input type="text" id="getipfsattributename" value=""/>
         </label>
         <div>Result: <span id="getipfsattributetrxres"></span></div>
         <br/>
         <button onclick="getIPFSAttribute()">Get</button>
+
+        <hr/>
+
+        <div>Get IPFS path:</div>
+        <div>Result: <span id="getipfspathtrxres"></span></div>
+        <br/>
+        <button onclick="getIPFSPath()">Get</button>
 
 
 
@@ -242,6 +249,10 @@
                         event.eventData.identityAddress + '.' +
                         event.eventData.attributeName + ' = ' +
                         event.eventData.attributeValue;
+                        break;
+                    case 'ipfsPath':
+                        document.getElementById("getipfspathtrxres").innerText = 
+                        event.eventData.path
                         break;
                 }
             };
@@ -433,6 +444,19 @@
                         ownerAddress: document.getElementById("myaddress").value,
                         identityAddress: document.getElementById("identityaddress").value,
                         attributeName: document.getElementById("getipfsattributename").value,
+                    }
+                });
+
+                ws.send(event);
+            };
+
+            getIPFSPath = function() {
+                document.getElementById("getipfspathtrxres").innerText = '';
+
+                const event = JSON.stringify({
+                    eventName: 'getIPFSPath',
+                    eventData: {
+                        identityAddress: document.getElementById("identityaddress").value
                     }
                 });
 
