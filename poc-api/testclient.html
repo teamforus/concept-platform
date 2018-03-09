@@ -9,6 +9,7 @@
             Server address:
             <input type="text" id="serveraddress" value="ws://localhost:8484/"/>
         </label>
+        <button onclick="reconnect()">Reconnect</button>
 
         <hr/>
         
@@ -198,75 +199,81 @@
         
 
         <script type="text/javascript">
-            var ws = new WebSocket(document.getElementById("serveraddress").value);
+            var ws = null;
 
-            ws.onopen = function()
-            {
-                console.log("Connection is open..."); 
-            };
+            reconnect = function() {
+                ws = new WebSocket(document.getElementById("serveraddress").value);
 
-            ws.onmessage = function (balance) 
-            {
-                const event = JSON.parse(balance.data);
-                switch (event.eventName) {
-                    case 'balance':
-                        document.getElementById("balance").innerText = event.eventData.balance;
-                        break;
-                    case 'receipt':
-                        document.getElementById("trxres").innerText = 'Transaction mined in block: ' + event.eventData.receipt.blockNumber;
-                        break;
-                    case 'newAccount':
-                        document.getElementById("newaddress").innerText = event.eventData.address;
-                        break;
-                    case 'tokenDeployed':
-                        document.getElementById("createerc20trxres").innerText = event.eventData.address;
-                        break;
-                    case 'identityDeployed':
-                        document.getElementById("createidentitytrxres").innerText = event.eventData.address;
-                        break;
-                    case 'identityAttributeChanged':
-                        document.getElementById("setidentityattributetrxres").innerText = 
-                        event.eventData.identityAddress + '.' +
-                        event.eventData.attributeName + ' = ' +
-                        event.eventData.attributeValue;
-                        break;
-                    case 'identityAttributeValidated':
-                        document.getElementById("validateidentityattributetrxres").innerText = 
-                        event.eventData.identityAddress + '.' +
-                        event.eventData.attributeName + ' is validated by:  ' +
-                        event.eventData.validatorAddress;
-                        break;
-                    case 'identityAttribute':
-                        document.getElementById("getidentityattributetrxres").innerText = 
-                        event.eventData.identityAddress + '.' +
-                        event.eventData.attributeName + ' = { ' +
-                        'name: ' + event.eventData.attribute.name +
-                        ', value: ' + event.eventData.attribute.value +
-                        ', validator: ' + event.eventData.attribute.validator + ' }';
-                        break;
-                    case 'ipfsAttributeChanged':
-                        document.getElementById("setipfsattributetrxres").innerText = 
-                        event.eventData.identityAddress + '.' +
-                        event.eventData.attributeName + ' = ' +
-                        event.eventData.attributeValue;
-                        break;
-                    case 'ipfsAttribute':
-                        document.getElementById("getipfsattributetrxres").innerText = 
-                        event.eventData.identityAddress + '.' +
-                        event.eventData.attributeName + ' = ' +
-                        event.eventData.attributeValue;
-                        break;
-                    case 'ipfsPath':
-                        document.getElementById("getipfspathtrxres").innerText = 
-                        event.eventData.path
-                        break;
-                }
-            };
-             
-            ws.onclose = function()
-            { 
-               console.log("Connection is closed..."); 
-            };
+                ws.onopen = function()
+                {
+                    console.log("Connection is open..."); 
+                };
+
+                ws.onmessage = function (balance) 
+                {
+                    const event = JSON.parse(balance.data);
+                    switch (event.eventName) {
+                        case 'balance':
+                            document.getElementById("balance").innerText = event.eventData.balance;
+                            break;
+                        case 'receipt':
+                            document.getElementById("trxres").innerText = 'Transaction mined in block: ' + event.eventData.receipt.blockNumber;
+                            break;
+                        case 'newAccount':
+                            document.getElementById("newaddress").innerText = event.eventData.address;
+                            break;
+                        case 'tokenDeployed':
+                            document.getElementById("createerc20trxres").innerText = event.eventData.address;
+                            break;
+                        case 'identityDeployed':
+                            document.getElementById("createidentitytrxres").innerText = event.eventData.address;
+                            break;
+                        case 'identityAttributeChanged':
+                            document.getElementById("setidentityattributetrxres").innerText = 
+                            event.eventData.identityAddress + '.' +
+                            event.eventData.attributeName + ' = ' +
+                            event.eventData.attributeValue;
+                            break;
+                        case 'identityAttributeValidated':
+                            document.getElementById("validateidentityattributetrxres").innerText = 
+                            event.eventData.identityAddress + '.' +
+                            event.eventData.attributeName + ' is validated by:  ' +
+                            event.eventData.validatorAddress;
+                            break;
+                        case 'identityAttribute':
+                            document.getElementById("getidentityattributetrxres").innerText = 
+                            event.eventData.identityAddress + '.' +
+                            event.eventData.attributeName + ' = { ' +
+                            'name: ' + event.eventData.attribute.name +
+                            ', value: ' + event.eventData.attribute.value +
+                            ', validator: ' + event.eventData.attribute.validator + ' }';
+                            break;
+                        case 'ipfsAttributeChanged':
+                            document.getElementById("setipfsattributetrxres").innerText = 
+                            event.eventData.identityAddress + '.' +
+                            event.eventData.attributeName + ' = ' +
+                            event.eventData.attributeValue;
+                            break;
+                        case 'ipfsAttribute':
+                            document.getElementById("getipfsattributetrxres").innerText = 
+                            event.eventData.identityAddress + '.' +
+                            event.eventData.attributeName + ' = ' +
+                            event.eventData.attributeValue;
+                            break;
+                        case 'ipfsPath':
+                            document.getElementById("getipfspathtrxres").innerText = 
+                            event.eventData.path
+                            break;
+                    }
+                };
+                
+                ws.onclose = function()
+                { 
+                console.log("Connection is closed..."); 
+                };
+            }
+
+            reconnect();
 
             getBalance = function() {
                 const event = JSON.stringify({
