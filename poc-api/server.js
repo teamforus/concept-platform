@@ -493,10 +493,6 @@ getIPFSAttribute = async function (
 
 class IpfsKVStore {
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    
     async init(ipfs, dirname, ipfsPath, newIpfsPathCallback) {
         this.ipfs = ipfs;
         this.dirname = dirname;
@@ -507,7 +503,7 @@ class IpfsKVStore {
             return this;
         }
 
-        return ipfs.files.add([{path: '/' + this.dirname}])
+        return this.ipfs.files.add([{path: '/' + this.dirname}])
         .then((res) => {
             for (let i = 0; i < res.length; i++) {
                 const file = res[i];
@@ -532,26 +528,17 @@ class IpfsKVStore {
     }
 
     async set(key, value) {
-        let filesToAdd = [];
-
-        ipfs.ls(this.ipfsPath).then((files) => {
-
+        let filesToAdd = await this.ipfs.ls(this.ipfsPath).then((files) => {
+            let result = [];
             for(let file of files) {
-                
-                this.get(file.name).then((content) => {
-                    return {
-                        path: '/' + this.dirname + '/' + file.name,
-                        content: content
-                    };
-                }).then((file) => {
-                    filesToAdd.push(file);
+                result.push({
+                    path: '/' + this.dirname + '/' + file.name,
+                    content: this.ipfs.catReadableStream(file.path)
                 });
-                
             };
+            return result;
         });
-        await this.sleep(2000);
-
-
+        
         let newFile ={
             path: '/' + this.dirname + '/' + key,
             content: value
@@ -567,7 +554,7 @@ class IpfsKVStore {
             filesToAdd.push(newFile);
         }
 
-        ipfs.files.add(filesToAdd).then((res) => {
+        this.ipfs.files.add(filesToAdd).then((res) => {
             for(let file of res) {
                 if (file.path == this.dirname) {
                     this.ipfsPath = '/ipfs/' + file.hash;
@@ -575,6 +562,5 @@ class IpfsKVStore {
                 }
             }
         });
-
     }
 }
