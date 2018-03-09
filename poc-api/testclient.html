@@ -5,6 +5,12 @@
     </head>
     <body>
 
+        <label>
+            Server address:
+            <input type="text" id="serveraddress" value="ws://localhost:8484/"/>
+        </label>
+
+        <hr/>
         
         <button onclick="createAccount()">create new account</button>
 
@@ -192,7 +198,7 @@
         
 
         <script type="text/javascript">
-            var ws = new WebSocket("ws://localhost:8484/");
+            var ws = new WebSocket(document.getElementById("serveraddress").value);
 
             ws.onopen = function()
             {
