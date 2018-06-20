@@ -5,3 +5,9 @@
 [submodule "api.forus.io-ethereum"]
 	path = api.forus.io-ethereum
 	url = https://github.com/teamforus/api.forus.io-ethereum.git
+[submodule "services.forus.io-php"]
+	path = services.forus.io-php
+	url = https://github.com/teamforus/services.forus.io-php.git
+[submodule "forus.io-front"]
+	path = forus.io-front
+	url = https://github.com/teamforus/forus.io-front.git
