@@ -1,0 +1,7 @@
+[submodule "api.forus.io-ipfs"]
+	path = api.forus.io-ipfs
+	url = https://github.com/teamforus/api.forus.io-ipfs.git
+	branch = helloworld
+[submodule "api.forus.io-ethereum"]
+	path = api.forus.io-ethereum
+	url = https://github.com/teamforus/api.forus.io-ethereum.git
