@@ -1,6 +1,0 @@
-[submodule "ETH"]
-	path = ETH
-	url = https://github.com/teamforus/api.forus.io-ethereum.git
-[submodule "backend-php"]
-	path = backend-php
-	url = https://github.com/teamforus/services.forus.io-php.git
