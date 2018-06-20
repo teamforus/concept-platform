@@ -8,3 +8,7 @@
 [submodule "forus.io-front"]
 	path = forus.io-front
 	url = https://github.com/teamforus/forus.io-front.git
+[submodule "services.forus.io-php"]
+	path = services.forus.io-php
+	url = https://github.com/teamforus/services.forus.io-php.git
+	branch = helloworld
