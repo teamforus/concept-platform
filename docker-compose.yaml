@@ -1,0 +1,31 @@
+version: "2"
+services:
+  php:
+    image: hcn2k/forus-hw-service-php
+    ports:
+      - "4000:80"
+    environment:
+      DB_HOST: mysql
+      DB_USERNAME: forus
+      DB_DATABASE: forus.io
+      DB_PASSWORD: JkNvw4m9juFEy5gxrSVcRXgzUHS7ZzcG
+      SERVICE_MESSAGES_IPFS_URL: "ipfs/api"
+      SERVICE_MESSAGES_BLOCK_CHAIN_URL: "blockchain/api"
+    command: bash -c "cd ./_docker && ./wait-for-mysql.sh && cd ../ && php artisan migrate:refresh --seed && apache2-foreground"
+  mysql:
+    image: "mysql:5.7"
+    environment:
+      MYSQL_ROOT_PASSWORD: JkNvw4m9juFEy5gxrSVcRXgzUHS7ZzcG
+      MYSQL_DATABASE: forus.io
+      MYSQL_USER: forus
+      MYSQL_PASSWORD: JkNvw4m9juFEy5gxrSVcRXgzUHS7ZzcG
+  web:
+    image: hcn2k/forus-hw-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: :4000/api/v1
+  ipfs:
+    image: jastam/ipfs-api
+  blockchain:
+    image: jastam/ipfs-api
