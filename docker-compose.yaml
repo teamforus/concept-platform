@@ -28,4 +28,4 @@ services:
   ipfs:
     image: jastam/ipfs-api
   blockchain:
-    image: jastam/ipfs-api
+    image: martijndoornik/io.forus.api.eth
